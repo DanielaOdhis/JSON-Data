@@ -39,7 +39,7 @@ const responseElement = document.getElementById('response');
 
 searchInput.addEventListener('input', function(event) {
   const typedWord = event.target.value;
-  console.log(typedWord);
+  // console.log(typedWord);
   fetchDataWithSearch(typedWord);
 });
 
