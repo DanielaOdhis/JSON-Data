@@ -53,30 +53,18 @@ searchInput.addEventListener('keydown', function(event) {
 
 async function fetchDataWithSearch(searchTerm) {
   try {
-    const response = await fetch(`http://13.48.147.79:4000/city`);
+    const response = await fetch(`http://13.48.147.79:4000/city`,{ body: searchTerm});
 
     if (!response.ok) {
       throw new Error('Fetch failed');
     }
 
     const data = await response.json();
-    const filteredData = filterData(data, searchTerm);
-    displaySuggestions(filteredData);
+    console.log(data);
+    displaySuggestions(data);
   } catch (error) {
     console.log('Error:', error);
   }
-}
-
-function filterData(data, searchTerm) {
-  if (Array.isArray(data)) {
-    return data.filter(item => {
-      const cityName = item.city.toLowerCase();
-      const search = searchTerm.toLowerCase();
-      return cityName.includes(search);
-    });
-  }
-
-  return [];
 }
 
 
