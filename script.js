@@ -46,7 +46,7 @@ searchInput.addEventListener('input', function(event) {
 searchInput.addEventListener('keydown', function(event) {
   if (event.key === 'Enter') {
     const typedWord = event.target.value;
-    console.log(typedWord);
+    // console.log(typedWord);
     fetchDataWithSearch(typedWord);
   }
 });
