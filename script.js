@@ -53,14 +53,20 @@ searchInput.addEventListener('keydown', function(event) {
 
 async function fetchDataWithSearch(searchTerm) {
   try {
-    const response = await fetch(`http://13.48.147.79:4000/city`,{ body: searchTerm});
+    let london = "london"
+    const response = await fetch(`http://13.48.147.79:4000/city`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain',
+      },
+      body: searchTerm,
+    });
 
     if (!response.ok) {
       throw new Error('Fetch failed');
     }
 
     const data = await response.json();
-    console.log(data);
     displaySuggestions(data);
   } catch (error) {
     console.log('Error:', error);
