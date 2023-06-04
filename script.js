@@ -52,8 +52,9 @@ searchInput.addEventListener('keydown', function(event) {
 });
 
 async function fetchDataWithSearch(searchTerm) {
+  searchTerm = searchTerm.trim();
+  if(searchTerm.length > 0) {
   try {
-    let london = "london"
     const response = await fetch(`http://13.48.147.79:4000/city`, {
       method: 'POST',
       headers: {
@@ -71,6 +72,10 @@ async function fetchDataWithSearch(searchTerm) {
   } catch (error) {
     console.log('Error:', error);
   }
+} 
+else {
+  suggestionsElement.innerHTML = '';
+}
 }
 
 
