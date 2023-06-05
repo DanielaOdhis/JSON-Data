@@ -28,6 +28,8 @@ input[type="text"] {
   border-radius: 4px;
   max-height: 200px;
   overflow-y: auto;
+  width: 300px;
+
 }
 
 .suggestions-list li {
