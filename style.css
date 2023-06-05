@@ -1,19 +1,48 @@
+body {
+  font-family: 'Times New Roman', Times, serif, sans-serif;
+  margin: 20px;
+  background-color: #f2f2f2;
+}
+
+h1 {
+  margin-bottom: 20px;
+}
+
+input[type="text"] {
+  padding: 10px;
+  border: 2px solid gray;
+  border-radius: 20px;
+  width: 300px;
+  -webkit-border-radius: 20px;
+  -moz-border-radius: 20px;
+  -ms-border-radius: 20px;
+  -o-border-radius: 20px;
+}
+
 .suggestions-list {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    max-height: 200px;
-    overflow-y: auto;
-  }
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+}
 
-  .suggestions-list li {
-    padding: 8px 16px;
-    cursor: pointer;
-  }
+.suggestions-list li {
+  padding: 8px 16px;
+  cursor: pointer;
+}
 
-  .suggestions-list li:hover {
-    background-color: #ddd;
-  }
+.suggestions-list li:hover {
+  background-color: #ddd;
+}
+
+#data {
+  margin-top: 20px;
+}
+
+#data p {
+  margin-bottom: 5px;
+}
