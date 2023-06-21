@@ -13,6 +13,7 @@ async function fetchData() {
     const responseData = await response.json();
     cityData = Array.isArray(responseData) ? responseData : [responseData];
     displayData(cityData);
+    fetchPrayerTimesForFirstCity(); // Fetch prayer times for the first city when the page loads
   } catch (error) {
     console.log('Error:', error);
   }
@@ -119,10 +120,37 @@ function displaySuggestions(data) {
   suggestionsElement.innerHTML = content;
 }
 
+async function fetchPrayerTimesForFirstCity() {
+  try {
+    const firstCity = cityData[0];
+    if (firstCity) {
+      const { city, latitude, longitude } = firstCity;
+      const prayerTimes = await fetchPrayerTimes(city, latitude, longitude);
+      displayPrayerTimes(prayerTimes);
+      displayData(firstCity);
+    }
+  } catch (error) {
+    console.log('Error:', error);
+  }
+}
+
 async function displayCityPrayerTimes(city, lat, lng) {
   try {
+    const prayerTimes = await fetchPrayerTimes(city, lat, lng);
+    displayPrayerTimes(prayerTimes);
+    const dataElement = document.getElementById('data');
+    const content = `<p>City: ${city}</p>`;
+    dataElement.innerHTML = content;
+    suggestionsElement.innerHTML = '';
+  } catch (error) {
+    console.log('Error:', error);
+  }
+}
+
+async function fetchPrayerTimes(city, lat, lng) {
+  try {
     const reqBody = { city: city, latitude: lat, longitude: lng };
-    const newRes = await fetch('http://13.48.147.79:80/prayer-times/', {
+    const response = await fetch('http://13.48.147.79:80/prayer-times/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -130,18 +158,12 @@ async function displayCityPrayerTimes(city, lat, lng) {
       body: JSON.stringify(reqBody)
     });
 
-    if (!newRes.ok) {
+    if (!response.ok) {
       throw new Error('Prayer-times fetch failed');
     }
 
-    const res_new = await newRes.json();
-    displayPrayerTimes(res_new);
-
-    const dataElement = document.getElementById('data');
-    const content = `<p>City: ${city}</p>`;
-
-    dataElement.innerHTML = content;
-    suggestionsElement.innerHTML = '';
+    const prayerTimes = await response.json();
+    return prayerTimes;
   } catch (error) {
     console.log('Error:', error);
   }
