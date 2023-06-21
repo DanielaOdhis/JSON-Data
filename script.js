@@ -24,60 +24,78 @@ function displayData(data) {
 
   if (Array.isArray(data)) {
     data.forEach(item => {
-      content += `<p>City: ${item.city}</p><p>Latitude: ${item.latitude}</p><p>Longitude: ${item.longitude}</p><br>`;
+      content += `<p onclick="displayCityPrayerTimes('${item.city}', '${item.latitude}', '${item.longitude}')">City: ${item.city}</p><br>`;
     });
   } else if (typeof data === 'object' && data !== null) {
-    content += `<p>City: ${data.city}</p><p>Latitude: ${data.latitude}</p><p>Longitude: ${data.longitude}</p>`;
+    content += `<p>City: ${data.city}</p><br>`;
   }
 
   dataElement.innerHTML = content;
+}
+
+function displayPrayerTimes(prayerTimes) {
+  const prayerTimesElement = document.getElementById('prayerTimes');
+  let content = '';
+
+  for (const key in prayerTimes) {
+    if (typeof prayerTimes[key] === 'object' && prayerTimes[key] !== null) {
+      content += `<p>${key}:</p>`;
+      content += '<ul>';
+
+      for (const prayer in prayerTimes[key]) {
+        content += `<li>${prayer}: ${prayerTimes[key][prayer]}</li>`;
+      }
+
+      content += '</ul>';
+    } else {
+      content += `<p>${key}: ${prayerTimes[key]}</p>`;
+    }
+  }
+
+  prayerTimesElement.innerHTML = content;
 }
 
 const searchInput = document.getElementById('search');
 const suggestionsElement = document.getElementById('suggestions');
 const responseElement = document.getElementById('response');
 
-searchInput.addEventListener('input', function(event) {
+searchInput.addEventListener('input', function (event) {
   const typedWord = event.target.value;
-  // console.log(typedWord);
   fetchDataWithSearch(typedWord);
 });
 
-searchInput.addEventListener('keydown', function(event) {
+searchInput.addEventListener('keydown', function (event) {
   if (event.key === 'Enter') {
     const typedWord = event.target.value;
-    // console.log(typedWord);
     fetchDataWithSearch(typedWord);
   }
 });
 
 async function fetchDataWithSearch(searchTerm) {
   searchTerm = searchTerm.trim();
-  if(searchTerm.length > 0) {
-  try {
-    const response = await fetch(`http://13.48.147.79:4000/city`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'text/plain',
-      },
-      body: searchTerm,
-    });
+  if (searchTerm.length > 0) {
+    try {
+      const response = await fetch(`http://13.48.147.79:4000/city`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'text/plain',
+        },
+        body: searchTerm,
+      });
 
-    if (!response.ok) {
-      throw new Error('Fetch failed');
+      if (!response.ok) {
+        throw new Error('Fetch failed');
+      }
+
+      const data = await response.json();
+      displaySuggestions(data);
+    } catch (error) {
+      console.log('Error:', error);
     }
-
-    const data = await response.json();
-    displaySuggestions(data);
-  } catch (error) {
-    console.log('Error:', error);
+  } else {
+    suggestionsElement.innerHTML = '';
   }
-} 
-else {
-  suggestionsElement.innerHTML = '';
 }
-}
-
 
 function displaySuggestions(data) {
   let content = '';
@@ -89,8 +107,10 @@ function displaySuggestions(data) {
 
     limitedData.forEach(item => {
       const city = item.city;
+      const lat = item.latitude;
+      const lng = item.longitude;
       const country = item.country;
-      content += `<li onclick="displayCityDetails('${city}', '${country}')">${city}, ${country}</li>`;
+      content += `<li onclick="displayCityPrayerTimes('${city}', '${lat}','${lng}')">${city}, ${country}</li>`;
     });
 
     content += '</ul>';
@@ -99,22 +119,30 @@ function displaySuggestions(data) {
   suggestionsElement.innerHTML = content;
 }
 
-function displayCityDetails(city, country) {
-  const filteredData = cityData.filter(item => item.city === country);
+async function displayCityPrayerTimes(city, lat, lng) {
+  try {
+    const reqBody = { city: city, latitude: lat, longitude: lng };
+    const newRes = await fetch('http://13.48.147.79:80/prayer-times/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(reqBody)
+    });
 
-  if (filteredData.length === 0) {
-    responseElement.innerHTML = 'City details not found.';
-    return;
-  }
+    if (!newRes.ok) {
+      throw new Error('Prayer-times fetch failed');
+    }
 
-  const foundCity = filteredData.find(item => item.city === city);
+    const res_new = await newRes.json();
+    displayPrayerTimes(res_new);
 
-  if (foundCity) {
-    const { city: cityName, country: countryName, latitude, longitude } = foundCity;
-    const content = `<p>City: ${cityName}</p><p>Country: ${countryName}</p><p>Latitude: ${latitude}</p><p>Longitude: ${longitude}</p>`;
-    responseElement.innerHTML = content;
-  } else {
-    responseElement.innerHTML = 'City details not found.';
+    const dataElement = document.getElementById('data');
+    const content = `<p>City: ${city}</p>`;
+
+    dataElement.innerHTML = content;
+    suggestionsElement.innerHTML = '';
+  } catch (error) {
+    console.log('Error:', error);
   }
 }
-

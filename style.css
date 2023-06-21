@@ -29,7 +29,6 @@ input[type="text"] {
   max-height: 200px;
   overflow-y: auto;
   width: 300px;
-
 }
 
 .suggestions-list li {
@@ -45,6 +44,17 @@ input[type="text"] {
   margin-top: 20px;
 }
 
-#data p {
-  margin-bottom: 5px;
+#data table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#data th, #data td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+#data th {
+  background-color: #f2f2f2;
 }
